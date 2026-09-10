@@ -11,7 +11,7 @@ int main()
 	{
 		std::string result;
 
-		std::cout << "VosNoms< ";
+		std::cout << "SamuelGauthier-DavidChalons< ";
 		char command[128];
 		std::cin.getline(command, 128);
 
