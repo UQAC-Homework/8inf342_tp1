@@ -21,10 +21,10 @@ int main()
 			char* prog = strtok(command, " ");
 			char* tmp = prog;
 
-			while (tmp != NULL)
+			while (tmp != nullptr)
 			{
 				args.push_back(tmp);
-				tmp = strtok(NULL, " ");
+				tmp = strtok(nullptr, " ");
 			}
 
 			char** argv = new char*[args.size() + 1];
@@ -34,7 +34,7 @@ int main()
 				argv[k] = args[k];
 			}
 
-			argv[args.size()] = NULL;
+			argv[args.size()] = nullptr;
 
 			if (strcmp(command, "exit") == 0)
 			{
@@ -61,7 +61,7 @@ int main()
 				}
 				else
 				{
-					if (waitpid(kidpid, 0, 0) < 0)
+					if (waitpid(kidpid, nullptr, 0) < 0)
 					{
 						return -1;
 					}
