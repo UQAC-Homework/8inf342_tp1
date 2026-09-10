@@ -5,21 +5,19 @@
 #include <string.h>
 #include <sys/wait.h>
 
-using namespace std;
-
 int main()
 {
 	while (true)
 	{
-		string result;
+		std::string result;
 
 		std::cout << "VosNoms< ";
 		char command[128];
-		cin.getline(command, 128);
+		std::cin.getline(command, 128);
 
 		if (strlen(command) != 0)
 		{
-			vector<char*> args;
+			std::vector<char*> args;
 			char* prog = strtok(command, " ");
 			char* tmp = prog;
 
