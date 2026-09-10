@@ -1,8 +1,8 @@
+#include <cstring>
 #include <iostream>
-#include <vector>
 #include <string>
 #include <unistd.h>
-#include <string.h>
+#include <vector>
 #include <sys/wait.h>
 
 int main()
