@@ -120,10 +120,6 @@ int main()
 			continue;
 		}
 
-		// Copy original command
-		const auto copy_command = static_cast<char*>(malloc(128));
-		strcpy(copy_command, command);
-
 		// 
 		if (command[0] == '.')
 		{
@@ -153,7 +149,7 @@ int main()
 		if (waitpid(child_pid, nullptr, 0) < 0)
 			return -1;
 
-		history.add(copy_command);
+		history.add(command);
 	}
 
 	return 0;
