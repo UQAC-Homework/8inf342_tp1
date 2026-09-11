@@ -32,7 +32,7 @@ namespace
 			{
 				for (int i = 0; i < _next - 1; i++)
 					_commands[i] = _commands[i + 1];
-				
+
 				_commands[_next - 1] = nullptr;
 				_next--;
 				//add(command);
@@ -128,6 +128,15 @@ int main()
 			continue;
 		}
 
+		bool wait_for_child = true;
+
+		// If ends with ampersand, don't wait child
+		if (command[strlen(command) - 1] == '&')
+		{
+			wait_for_child = false;
+			command[strlen(command) - 1] = '\0';
+		}
+
 		// Fork
 		const pid_t child_pid = fork();
 
@@ -146,7 +155,7 @@ int main()
 		}
 
 		// If child failed, exit
-		if (waitpid(child_pid, nullptr, 0) < 0)
+		if (wait_for_child && waitpid(child_pid, nullptr, 0) < 0)
 			return -1;
 
 		history.add(command);
