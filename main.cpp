@@ -10,8 +10,8 @@ static void execute_command(char* command)
 {
 	// Split arguments
 	std::vector<char*> args;
-	char* first_keyword = strtok(command, " ");
-	char* current_keyword = first_keyword;
+	char* command_name = strtok(command, " ");
+	char* current_keyword = command_name;
 
 	while (current_keyword != nullptr)
 	{
@@ -28,7 +28,7 @@ static void execute_command(char* command)
 	argv[args.size()] = nullptr;
 
 	// Run command
-	execvp(first_keyword, argv);
+	execvp(command_name, argv);
 
 	delete[] argv;
 }
