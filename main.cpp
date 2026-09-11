@@ -5,6 +5,66 @@
 #include <vector>
 #include <sys/wait.h>
 
+namespace
+{
+	/// Data structure responsible to hold the history of ran commands
+	class CommandHistory
+	{
+	private:
+		size_t _next;
+		const size_t _size;
+		char** _end;
+		char** _commands;
+
+	public:
+		explicit CommandHistory(const size_t size) : _size(size)
+		{
+			_commands = new char*[_size]();
+			_next = 0;
+			_end = &_commands[size];
+		}
+
+		/// Adds the given command to the history
+		void add(const char* command)
+		{
+			// If buffer filled, shift all
+			if (_next == _size)
+			{
+				for (int i = 0; i < _next - 1; i++)
+					_commands[i] = _commands[i + 1];
+				
+				_commands[_next - 1] = nullptr;
+				_next--;
+				//add(command);
+				//return;
+			}
+
+			const auto entry = new char[strlen(command) + 1];
+			strcpy(entry, command);
+
+			_commands[_next] = entry;
+			_next++;
+		}
+
+		/// Prints all the commands to the given output
+		void print(std::ostream& output) const
+		{
+			for (auto i = 0; i < _next; i++)
+			{
+				output << _commands[i] << std::endl;
+			}
+		}
+
+		~CommandHistory()
+		{
+			for (auto i = 0; i < _next; i++)
+				delete[] _commands[i];
+
+			delete[] _commands;
+		}
+	};
+}
+
 /// Function responsible to execute the given command
 static void execute_command(char* command)
 {
@@ -35,7 +95,7 @@ static void execute_command(char* command)
 
 int main()
 {
-	char* command_history[5] = {};
+	auto history = CommandHistory(5);
 
 	while (true)
 	{
@@ -56,21 +116,13 @@ int main()
 		// If history command, display command history
 		if (strcmp(command, "historique") == 0)
 		{
-			for (const auto current : command_history)
-			{
-				if (current == nullptr)
-					break;
-
-				std::cout << current << std::endl;
-			}
-
+			history.print(std::cout);
 			continue;
 		}
 
 		// Copy original command
 		const auto copy_command = static_cast<char*>(malloc(128));
 		strcpy(copy_command, command);
-
 
 		// 
 		if (command[0] == '.')
@@ -101,28 +153,7 @@ int main()
 		if (waitpid(child_pid, nullptr, 0) < 0)
 			return -1;
 
-		// Record command in history
-		bool was_set = false;
-
-		for (auto& i : command_history)
-		{
-			if (i != nullptr)
-				continue;
-
-			i = copy_command;
-			was_set = true;
-			break;
-		}
-
-		if (!was_set)
-		{
-			constexpr auto size = std::size(command_history);
-
-			for (int i = 0; i < size - 1; i++)
-				command_history[i] = command_history[i + 1];
-
-			command_history[size - 1] = copy_command;
-		}
+		history.add(copy_command);
 	}
 
 	return 0;
