@@ -154,7 +154,7 @@ int main()
 			return 0;
 		}
 
-		// If child failed, exit
+		// If waiting for child failed, exit
 		if (wait_for_child && waitpid(child_pid, nullptr, 0) < 0)
 			return -1;
 
