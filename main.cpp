@@ -16,12 +16,15 @@ namespace
 		char** _end;
 		char** _commands;
 
+		size_t _command_count;
+
 	public:
 		explicit CommandHistory(const size_t size) : _size(size)
 		{
 			_commands = new char*[_size]();
 			_next = 0;
 			_end = &_commands[size];
+			_command_count = 0;
 		}
 
 		/// Adds the given command to the history
@@ -44,14 +47,20 @@ namespace
 
 			_commands[_next] = entry;
 			_next++;
+			_command_count++;
 		}
 
 		/// Prints all the commands to the given output
 		void print(std::ostream& output) const
 		{
+			const auto count = std::min(_command_count, _size);
+
 			for (auto i = 0; i < _next; i++)
 			{
-				output << _commands[i] << std::endl;
+				output << (count - i);
+				output << "\t";
+				output << _commands[i];
+				output << std::endl;
 			}
 		}
 
@@ -166,7 +175,8 @@ int main()
 		if (wait_for_child && waitpid(child_pid, nullptr, 0) < 0)
 			return -1;
 
-		history.add(command);
+		std::string history_entry = std::string(command) + "\t" + std::to_string(child_pid);
+		history.add(history_entry.c_str());
 	}
 
 	return 0;
