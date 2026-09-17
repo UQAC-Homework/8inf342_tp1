@@ -88,7 +88,13 @@ static void execute_command(char* command)
 	argv[args.size()] = nullptr;
 
 	// Run command
-	execvp(command_name, argv);
+	const auto code = execvp(command_name, argv);
+
+	if (code != 0)
+	{
+		const std::string str_command(command);
+		perror(("Failed to execute the command '" + str_command + "'").c_str());
+	}
 
 	delete[] argv;
 }
