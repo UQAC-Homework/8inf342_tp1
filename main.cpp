@@ -99,8 +99,6 @@ int main()
 
 	while (true)
 	{
-		std::string result;
-
 		std::cout << "GauthierChalons< ";
 		char command[128];
 		std::cin.getline(command, 128);
