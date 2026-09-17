@@ -128,7 +128,7 @@ int main()
 			continue;
 		}
 
-		// 
+		// Run program
 		if (command[0] == '.')
 		{
 			const auto shell_command = strtok(command, " ");
