@@ -135,6 +135,11 @@ int main()
 		if (strcmp(command, "historique") == 0)
 		{
 			history.print(std::cout);
+
+			std::ofstream output;
+			output.open("historique.txt");
+			history.print(output);
+			output.close();
 			continue;
 		}
 
