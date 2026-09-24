@@ -73,13 +73,6 @@ namespace
 			delete[] _commands;
 		}
 	};
-
-	enum Mode
-	{
-		MANUAL,
-		INSTANCE_1,
-		INSTANCE_2
-	};
 }
 
 /// Function responsible to execute the given command
@@ -116,47 +109,19 @@ static void execute_command(char* command)
 	delete[] argv;
 }
 
-static char* get_random_command()
-{
-	const auto index = rand() % 2;
-
-	if (index == 0)
-		return std::string("ls").data();
-
-	if (index == 1)
-		return std::string("ls -l").data();
-
-	return std::string("ls -lh").data();
-}
-
 int main()
 {
 	auto history = CommandHistory(5);
 
 	char* command = nullptr;
-	Mode current_mode = MANUAL;
-	auto command_index = 0;
 
 	while (true)
 	{
-		if (current_mode == INSTANCE_1 && command_index == 100)
-			current_mode = MANUAL;
-		else if (current_mode == INSTANCE_2 && command_index == 1000)
-			current_mode = MANUAL;
+		std::cout << "GauthierChalons< ";
+		char user_buffer[128];
+		std::cin.getline(user_buffer, 128);
 
-		if (current_mode == MANUAL)
-		{
-			std::cout << "GauthierChalons< ";
-			char user_buffer[128];
-			std::cin.getline(user_buffer, 128);
-
-			command = user_buffer;
-		}
-		else
-		{
-			command = get_random_command();
-			command_index++;
-		}
+		command = user_buffer;
 
 		// If empty, skip
 		if (strlen(command) == 0)
@@ -166,49 +131,10 @@ int main()
 		if (strcmp(command, "stop") == 0)
 			return 0;
 
-		// Start instance 1
-		if (strcmp(command, "instance 1") == 0)
-		{
-			std::cout << "Starting instance #1..." << std::endl;
-			current_mode = INSTANCE_1;
-			command_index = 0;
-			continue;
-		}
-
-		// Start instance 2
-		if (strcmp(command, "instance 2") == 0)
-		{
-			std::cout << "Starting instance #2..." << std::endl;
-			current_mode = INSTANCE_2;
-			command_index = 0;
-			continue;
-		}
-
-		bool should_print_history = false;
-
-		if (current_mode == INSTANCE_1)
-			should_print_history = command_index % 50 == 0;
-		else if (current_mode == INSTANCE_2)
-			should_print_history = command_index % 100 == 0;
-
 		// If history command, display command history
-		if (should_print_history || strcmp(command, "historique") == 0)
+		if (strcmp(command, "historique") == 0)
 		{
-			if (current_mode == MANUAL)
-			{
-				history.print(std::cout);
-				continue;
-			}
-
-			std::ofstream output;
-
-			if (current_mode == INSTANCE_1)
-				output.open("historique1_" + std::to_string(command_index) + ".txt");
-			else
-				output.open("historique2_" + std::to_string(command_index) + ".txt");
-
-			history.print(output);
-			output.close();
+			history.print(std::cout);
 			continue;
 		}
 
