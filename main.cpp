@@ -116,7 +116,14 @@ static void run_automated_instance(int instance_id, int total_commands, int hist
     
 	// Pool of commands to execute randomly. Avoided interactive commands like "man" to prevent blocking.
 	std::vector<std::string> command_pool = {
-		"ls -l", "pwd", "ls -a", "mkdir testdir", "rmdir testdir"
+		"ls -l",
+		"pwd",
+		"ls -a",
+		"ls -la",
+		"mkdir testdir -p",
+		"rm -rf testdir",
+		"ps",
+		"echo \"Secret message\""
 	};
 
 	std::string all_cmds_filename = "toutes_les_commandes_instance" + std::to_string(instance_id) + ".txt";
