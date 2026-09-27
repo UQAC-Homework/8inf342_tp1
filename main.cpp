@@ -211,15 +211,11 @@ int main()
 
 	auto history = CommandHistory(5);
 
-	char* command = nullptr;
-
 	while (true)
 	{
 		std::cout << "GauthierChalons< ";
-		char user_buffer[128];
-		std::cin.getline(user_buffer, 128);
-
-		command = user_buffer;
+		char command[128];
+		std::cin.getline(command, 128);
 
 		// If empty, skip
 		if (strlen(command) == 0)
