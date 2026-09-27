@@ -189,7 +189,8 @@ static void run_automated_instance(int instance_id, int total_commands, int hist
 int main()
 {
 	// Initialize random seed for automated instances
-	srand(time(nullptr));
+	unsigned seed = time(nullptr);
+	srand(seed);
 
 	std::cout << "Select mode:" << std::endl;
 	std::cout << "1. Interactive mode (Part 1)" << std::endl;
