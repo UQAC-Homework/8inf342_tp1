@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <vector>
 #include <sys/wait.h>
+#include <chrono>
+#include <random>
 
 namespace
 {
@@ -39,8 +41,6 @@ namespace
 
 				_commands[_next - 1] = nullptr;
 				_next--;
-				//add(command);
-				//return;
 			}
 
 			const auto entry = new char[strlen(command) + 1];
@@ -109,8 +109,106 @@ static void execute_command(char* command)
 	delete[] argv;
 }
 
+/// Function responsible to run the automated benchmarking instances (Part 2)
+static void run_automated_instance(int instance_id, int total_commands, int history_interval)
+{
+	auto history = CommandHistory(5);
+    
+	// Pool of commands to execute randomly. Avoided interactive commands like "man" to prevent blocking.
+	std::vector<std::string> command_pool = {
+		"ls -l", "pwd", "ls -a", "mkdir testdir", "rmdir testdir"
+	};
+
+	std::string all_cmds_filename = "toutes_les_commandes_instance" + std::to_string(instance_id) + ".txt";
+	std::ofstream all_cmds_file(all_cmds_filename);
+
+	std::cout << "Starting Instance " << instance_id << " (" << total_commands << " commands)...\n";
+    
+	// Start timer for the report
+	auto start_time = std::chrono::high_resolution_clock::now();
+
+	for (int i = 1; i <= total_commands; i++)
+	{
+		// Pick a random command
+		std::string cmd_str = command_pool[rand() % command_pool.size()];
+		all_cmds_file << cmd_str << "\n";
+
+		char command[128];
+		strcpy(command, cmd_str.c_str());
+
+		// Fork
+		const pid_t child_pid = fork();
+
+		// If failed, exit
+		if (child_pid < 0)
+		{
+			perror("Could not fork");
+			return;
+		}
+
+		// If as child
+		if (child_pid == 0)
+		{
+			execute_command(command);
+			exit(0); // Ensure child exits
+		}
+
+		// Wait for child
+		waitpid(child_pid, nullptr, 0);
+
+		// Record in history
+		std::string history_entry = std::string(command) + "\t" + std::to_string(child_pid);
+		history.add(history_entry.c_str());
+
+		// Trigger history export at specific intervals
+		if (i % history_interval == 0)
+		{
+			std::string hist_filename = "historique" + std::to_string(instance_id) + "_" + std::to_string(i) + ".txt";
+			std::ofstream output(hist_filename);
+			history.print(output);
+			output.close();
+			std::cout << "[INFO] Saved history to " << hist_filename << " (Command " << i << ")\n";
+		}
+	}
+
+	all_cmds_file.close();
+    
+	// End timer and print the execution duration
+	auto end_time = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> diff = end_time - start_time;
+	std::cout << "Instance " << instance_id << " finished in " << diff.count() << " seconds.\n\n";
+}
+
 int main()
 {
+	// Initialize random seed for automated instances
+	srand(time(nullptr));
+
+	std::cout << "Select mode:\n";
+	std::cout << "1. Interactive mode (Part 1)\n";
+	std::cout << "2. Run Instance 1 (100 commands)\n";
+	std::cout << "3. Run Instance 2 (500 commands)\n";
+	std::cout << "Choice: ";
+	
+	int choice;
+	std::cin >> choice;
+	std::cin.ignore(); // Flush newline character
+
+	if (choice == 2)
+	{
+		run_automated_instance(1, 100, 50);
+		return 0;
+	}
+	else if (choice == 3)
+	{
+		run_automated_instance(2, 500, 100);
+		return 0;
+	}
+
+	// ==========================================
+	// ORIGINAL INTERACTIVE CODE BELOW (PART 1)
+	// ==========================================
+
 	auto history = CommandHistory(5);
 
 	char* command = nullptr;
