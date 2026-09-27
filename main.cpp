@@ -137,7 +137,7 @@ static void run_automated_instance(int instance_id, int total_commands, int hist
 	for (int i = 1; i <= total_commands; i++)
 	{
 		// Pick a random command
-		std::string cmd_str = command_pool[rand() % command_pool.size()];
+		const std::string& cmd_str = command_pool[rand() % command_pool.size()]; // NOLINT(*-msc50-cpp)
 		all_cmds_file << cmd_str << "\n";
 
 		char command[128];
