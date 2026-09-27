@@ -184,10 +184,10 @@ int main()
 	// Initialize random seed for automated instances
 	srand(time(nullptr));
 
-	std::cout << "Select mode:\n";
-	std::cout << "1. Interactive mode (Part 1)\n";
-	std::cout << "2. Run Instance 1 (100 commands)\n";
-	std::cout << "3. Run Instance 2 (500 commands)\n";
+	std::cout << "Select mode:" << std::endl;
+	std::cout << "1. Interactive mode (Part 1)" << std::endl;
+	std::cout << "2. Run Instance 1 (100 commands)" << std::endl;
+	std::cout << "3. Run Instance 2 (500 commands)" << std::endl;
 	std::cout << "Choice: ";
 	
 	int choice;
