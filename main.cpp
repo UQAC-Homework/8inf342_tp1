@@ -1,12 +1,12 @@
+#include <chrono>
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <string>
 #include <unistd.h>
 #include <vector>
 #include <sys/wait.h>
-#include <chrono>
-#include <random>
 
 namespace
 {
@@ -207,7 +207,8 @@ int main()
 		run_automated_instance(1, 100, 50);
 		return 0;
 	}
-	else if (choice == 3)
+
+	if (choice == 3)
 	{
 		run_automated_instance(2, 500, 100);
 		return 0;
